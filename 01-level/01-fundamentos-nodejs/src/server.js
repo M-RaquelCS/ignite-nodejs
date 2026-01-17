@@ -1,4 +1,5 @@
 import http from "node:http";
+import { json } from "./middlewares/json.js";
 
 // GET /users => Buscando usuários no banc-end
 // POST /users => Criar um usuário no back-end
@@ -11,33 +12,21 @@ import http from "node:http";
 
 const users = [];
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
 	const { method, url } = req;
 
-	const buffers = []
-
-	for await (const chunk of req) {
-		buffers.push(chunk)
-	}
-
-	try {
-		req.body = JSON.parse(Buffer.concat(buffers).toString())
-	} catch {
-		req.body = null
-	}
+	await json(req, res);
 
 	if (method === "GET" && url === "/users") {
-		return res
-			.setHeader("Content-type", "application/json")
-			.end(JSON.stringify(users));
+		return res.end(JSON.stringify(users));
 	}
 
 	if (method === "POST" && url === "/users") {
-		const { name, email } = req.body
+		const { name, email } = req.body;
 		users.push({
 			id: 1,
 			name,
-			email
+			email,
 		});
 
 		return res.writeHead(201).end();
