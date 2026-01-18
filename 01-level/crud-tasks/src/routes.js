@@ -104,10 +104,38 @@ export const routes = [
 			if (!hasId) {
 				return res
 					.writeHead(400, { "Content-Type": "application/json" })
-					.end(JSON.stringify({ error: "Informe title e/ou description." }));
+					.end(JSON.stringify({ error: "Informe um Id válido." }));
 			}
 
 			db.delete("tasks", id);
+
+			return res.writeHead(204).end();
+		},
+	},
+	{
+		method: "PATCH",
+		path: buildRoutePath("/tasks/:id/complete"),
+		handler: async (req, res) => {
+			const { id } = req.params;
+
+			const hasId = typeof id === "string" && id.trim() !== "";
+
+			if (!hasId) {
+				return res
+					.writeHead(400, { "Content-Type": "application/json" })
+					.end(JSON.stringify({ error: "Informe um id válido." }));
+			}
+
+			const updateData = await db.update("tasks", id, {
+				updated_at: new Date(),
+				completed_at: new Date(),
+			});
+
+			if (!updateData) {
+				return res
+					.writeHead(404, { "Content-Type": "application/json" })
+					.end(JSON.stringify({ error: "Taks não existe" }));
+			}
 
 			return res.writeHead(204).end();
 		},

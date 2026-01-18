@@ -46,7 +46,7 @@ export class Database {
 		return data;
 	}
 
-	// PUT
+	// PUT and PATCH
 	update(table, id, data) {
 		const collection = this.#database[table] ?? [];
 		const rowIndex = collection.findIndex((row) => row.id === id);
