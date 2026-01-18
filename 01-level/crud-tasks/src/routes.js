@@ -61,4 +61,36 @@ export const routes = [
 				.end(JSON.stringify(tasks));
 		},
 	},
+	{
+		method: "PUT",
+		path: buildRoutePath("/tasks/:id"),
+		handler: async (req, res) => {
+			const { id } = req.params;
+			const { title, description } = req.body;
+
+			const hasTitle = typeof title === "string" && title.trim() !== "";
+			const hasDescription =
+				typeof description === "string" && description.trim() !== "";
+
+			if (!hasTitle || !hasDescription) {
+				return res
+					.writeHead(400, { "Content-Type": "application/json" })
+					.end(JSON.stringify({ error: "Informe title e/ou description." }));
+			}
+
+			const updateData = await db.update("tasks", id, {
+				title,
+				description,
+				updated_at: new Date(),
+			});
+
+			if (!updateData) {
+				return res
+					.writeHead(404, { "Content-Type": "application/json" })
+					.end(JSON.stringify({ error: "Taks não existe" }));
+			}
+
+			return res.writeHead(204).end();
+		},
+	},
 ];

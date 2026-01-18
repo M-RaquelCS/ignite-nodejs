@@ -45,4 +45,21 @@ export class Database {
 
 		return data;
 	}
+
+	update(table, id, data) {
+		const collection = this.#database[table] ?? [];
+		const rowIndex = collection.findIndex((row) => row.id === id);
+
+		if (rowIndex > -1) {
+			this.#database[table][rowIndex] = {
+				...collection[rowIndex],
+				...data,
+				id,
+			};
+			this.#persist();
+			return this.#database[table][rowIndex];
+		}
+
+		return; // caso não encontre o registro
+	}
 }
