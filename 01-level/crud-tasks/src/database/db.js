@@ -46,6 +46,7 @@ export class Database {
 		return data;
 	}
 
+	// PUT
 	update(table, id, data) {
 		const collection = this.#database[table] ?? [];
 		const rowIndex = collection.findIndex((row) => row.id === id);
@@ -61,5 +62,17 @@ export class Database {
 		}
 
 		return; // caso não encontre o registro
+	}
+
+	// DELETE
+	delete(table, id) {
+		const rowIndex = this.#database[table].findIndex((row) => row.id === id);
+
+		if (rowIndex > -1) {
+			this.#database[table].splice(rowIndex, 1);
+			this.#persist();
+		}
+
+		return;
 	}
 }

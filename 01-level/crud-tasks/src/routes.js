@@ -93,4 +93,23 @@ export const routes = [
 			return res.writeHead(204).end();
 		},
 	},
+	{
+		method: "DELETE",
+		path: buildRoutePath("/tasks/:id"),
+		handler: (req, res) => {
+			const { id } = req.params;
+
+			const hasId = typeof id === "string" && id.trim() !== "";
+
+			if (!hasId) {
+				return res
+					.writeHead(400, { "Content-Type": "application/json" })
+					.end(JSON.stringify({ error: "Informe title e/ou description." }));
+			}
+
+			db.delete("tasks", id);
+
+			return res.writeHead(204).end();
+		},
+	},
 ];
